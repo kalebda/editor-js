@@ -1,7 +1,7 @@
-import * as _ from './utils';
-import $ from './dom';
-import Block, { BlockToolAPI } from './block';
-import { MoveEvent } from '../../types/tools';
+import * as _ from "./utils";
+import $ from "./dom";
+import Block, { BlockToolAPI } from "./block";
+import { MoveEvent } from "../../types/tools";
 
 /**
  * @class Blocks
@@ -66,7 +66,11 @@ export default class Blocks {
    * @param {Block} value — value to set
    * @returns {boolean}
    */
-  public static set(instance: Blocks, property: PropertyKey, value: Block | unknown): boolean {
+  public static set(
+    instance: Blocks,
+    property: PropertyKey,
+    value: Block | unknown
+  ): boolean {
     /**
      * If property name is not a number (method or other property, access it via reflect
      */
@@ -154,27 +158,38 @@ export default class Blocks {
      * @see https://stackoverflow.com/a/44932690/1238150
      */
     const block = this.blocks.splice(fromIndex, 1)[0];
-
     // manipulate DOM
     const prevIndex = toIndex - 1;
     const previousBlockIndex = Math.max(0, prevIndex);
     const previousBlock = this.blocks[previousBlockIndex];
-
-    if (toIndex > 0) {
-      this.insertToDOM(block, 'afterend', previousBlock);
+    let event: MoveEvent;
+    if (
+      !["topics", "lessons", "points", "subpoints"].includes(
+        previousBlock.name
+      ) &&
+      !["topics", "lessons", "points", "subpoints"].includes(block.name)
+    ) {
+      if (toIndex > 0) {
+        this.insertToDOM(block, "afterend", previousBlock);
+      } else {
+        this.insertToDOM(block, "beforebegin", previousBlock);
+      }
+      // move in array
+      this.blocks.splice(toIndex, 0, block);
+      // invoke hook
+      event = this.composeBlockEvent("move", {
+        fromIndex,
+        toIndex,
+      });
     } else {
-      this.insertToDOM(block, 'beforebegin', previousBlock);
+      // move in array
+      this.blocks.splice(fromIndex, 0, block);
+      // invoke hook
+      event = this.composeBlockEvent("move", {
+        fromIndex,
+        toIndex: fromIndex,
+      });
     }
-
-    // move in array
-    this.blocks.splice(toIndex, 0, block);
-
-    // invoke hook
-    const event: MoveEvent = this.composeBlockEvent('move', {
-      fromIndex,
-      toIndex,
-    });
-
     block.call(BlockToolAPI.MOVED, event);
   }
 
@@ -208,12 +223,12 @@ export default class Blocks {
     if (index > 0) {
       const previousBlock = this.blocks[index - 1];
 
-      this.insertToDOM(block, 'afterend', previousBlock);
+      this.insertToDOM(block, "afterend", previousBlock);
     } else {
       const nextBlock = this.blocks[index + 1];
 
       if (nextBlock) {
-        this.insertToDOM(block, 'beforebegin', nextBlock);
+        this.insertToDOM(block, "beforebegin", nextBlock);
       } else {
         this.insertToDOM(block);
       }
@@ -228,7 +243,7 @@ export default class Blocks {
    */
   public replace(index: number, block: Block): void {
     if (this.blocks[index] === undefined) {
-      throw Error('Incorrect index');
+      throw Error("Incorrect index");
     }
 
     const prevBlock = this.blocks[index];
@@ -244,7 +259,7 @@ export default class Blocks {
    * @param blocks - blocks to insert
    * @param index - index to insert blocks at
    */
-  public insertMany(blocks: Block[], index: number ): void {
+  public insertMany(blocks: Block[], index: number): void {
     const fragment = new DocumentFragment();
 
     for (const block of blocks) {
@@ -285,19 +300,24 @@ export default class Blocks {
     if (isNaN(index)) {
       index = this.length - 1;
     }
+    if (
+      !["topics", "lessons", "points", "subpoints"].includes(
+        this.blocks[index].name
+      )
+    ) {
+      this.blocks[index].holder.remove();
 
-    this.blocks[index].holder.remove();
+      this.blocks[index].call(BlockToolAPI.REMOVED);
 
-    this.blocks[index].call(BlockToolAPI.REMOVED);
-
-    this.blocks.splice(index, 1);
+      this.blocks.splice(index, 1);
+    }
   }
 
   /**
    * Remove all blocks
    */
   public removeAll(): void {
-    this.workingArea.innerHTML = '';
+    this.workingArea.innerHTML = "";
 
     this.blocks.forEach((block) => block.call(BlockToolAPI.REMOVED));
 
@@ -344,7 +364,11 @@ export default class Blocks {
    * @param {InsertPosition} position — insert position (if set, will use insertAdjacentElement)
    * @param {Block} target — Block related to position
    */
-  private insertToDOM(block: Block, position?: InsertPosition, target?: Block): void {
+  private insertToDOM(
+    block: Block,
+    position?: InsertPosition,
+    target?: Block
+  ): void {
     if (position) {
       target.holder.insertAdjacentElement(position, block.holder);
     } else {
