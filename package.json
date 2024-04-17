@@ -1,6 +1,6 @@
 {
   "name": "@kalebu2468/editorjs",
-  "version": "2.30.0-rc.2",
+  "version": "0.0.2",
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editorjs.umd.js",
   "module": "dist/editorjs.mjs",
@@ -31,11 +31,13 @@
     "test:e2e:open": "yarn build:test && cypress open",
     "devserver:start": "yarn build && node ./devserver.js"
   },
-  "author": "CodeX",
-  "license": "Apache-2.0",
+  "author": {
+    "name": "kalebu2468",
+    "email": "kalebu246@gmail.com"
+  },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/codex-team/editor.js.git"
+    "url": "git+https://github.com/kalebda/editor-js.git"
   },
   "devDependencies": {
     "@babel/register": "^7.21.0",

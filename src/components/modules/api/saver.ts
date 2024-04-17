@@ -1,7 +1,7 @@
-import { Saver } from '../../../../types/api';
-import { OutputData } from '../../../../types';
-import * as _ from '../../utils';
-import Module from '../../__module';
+import { Saver } from "../../../../types/api";
+import { OutputData } from "../../../../types";
+import * as _ from "../../utils";
+import Module from "../../__module";
 
 /**
  * @class SaverAPI
@@ -15,7 +15,7 @@ export default class SaverAPI extends Module {
    */
   public get methods(): Saver {
     return {
-      save: (): Promise<OutputData> => this.save(),
+      save: (force = false): Promise<OutputData> => this.save(force),
     };
   }
 
@@ -24,11 +24,11 @@ export default class SaverAPI extends Module {
    *
    * @returns {OutputData}
    */
-  public save(): Promise<OutputData> {
-    const errorText = 'Editor\'s content can not be saved in read-only mode';
+  public save(force = false): Promise<OutputData> {
+    const errorText = `Editor\'s content can not be saved in read-only mode -> ${force}`;
 
-    if (this.Editor.ReadOnly.isEnabled) {
-      _.logLabeled(errorText, 'warn');
+    if (force == false && this.Editor.ReadOnly.isEnabled) {
+      _.logLabeled(errorText, "warn");
 
       return Promise.reject(new Error(errorText));
     }

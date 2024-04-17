@@ -296,14 +296,16 @@ export default class Blocks {
    *
    * @param {number} index - index of Block to remove
    */
-  public remove(index: number): void {
+  public remove(index: number, isReadOnlyClear: boolean = false): void {
     if (isNaN(index)) {
       index = this.length - 1;
     }
+
     if (
       !["topics", "lessons", "points", "subpoints"].includes(
         this.blocks[index].name
-      )
+      ) ||
+      isReadOnlyClear
     ) {
       this.blocks[index].holder.remove();
 

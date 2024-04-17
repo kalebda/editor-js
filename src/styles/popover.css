@@ -8,19 +8,19 @@
   --padding: 6px;
   --offset-from-target: 8px;
   --color-border: #e8e8eb;
-  --color-shadow: rgba(13,20,33,0.13);
+  --color-shadow: rgba(13, 20, 33, 0.13);
   --color-background: white;
   --color-text-primary: black;
   --color-text-secondary: #707684;
   --color-border-icon: rgb(201 201 204 / 48%);
-  --color-border-icon-disabled: #EFF0F1;
-  --color-text-icon-active: #388AE5;
+  --color-border-icon-disabled: #eff0f1;
+  --color-text-icon-active: #388ae5;
   --color-background-icon-active: rgba(56, 138, 229, 0.1);
   --color-background-item-focus: rgba(34, 186, 255, 0.08);
   --color-shadow-item-focus: rgba(7, 161, 227, 0.08);
   --color-background-item-hover: #eff2f5;
-  --color-background-item-confirm: #E24A4A;
-  --color-background-item-confirm-hover: #CE4343;
+  --color-background-item-confirm: #e24a4a;
+  --color-background-item-confirm-hover: #ce4343;
 
   min-width: var(--width);
   width: var(--width);
@@ -102,7 +102,8 @@
     }
   }
 
-  &__search, &__custom-content:not(:empty) {
+  &__search,
+  &__custom-content:not(:empty) {
     margin-bottom: 5px;
   }
 
@@ -135,7 +136,6 @@
     display: none;
   }
 }
-
 
 /** 
  * Popover item styles
@@ -176,7 +176,7 @@
       height: var(--icon-size);
     }
 
-    @media (--mobile){
+    @media (--mobile) {
       width: 36px;
       height: 36px;
       border-radius: 8px;
@@ -212,7 +212,7 @@
     margin-bottom: -2px;
     opacity: 0.6;
 
-    @media (--mobile){
+    @media (--mobile) {
       display: none;
     }
   }
@@ -250,7 +250,7 @@
   @media (--can-hover) {
     &:hover {
       cursor: pointer;
-      
+
       &:not(.ce-popover-item--no-hover) {
         background-color: var(--color-background-item-hover);
       }
@@ -287,16 +287,16 @@
         background: var(--color-background-item-confirm-hover) !important;
       }
     }
-
   }
 
-  &--confirmation, &--active, &--focused {
+  &--confirmation,
+  &--active,
+  &--focused {
     .ce-popover-item__icon {
       box-shadow: none;
     }
   }
 }
-
 
 /** 
  * Animations
@@ -313,7 +313,6 @@
   }
 
   to {
-
     transform: translateY(0);
   }
 }
@@ -330,11 +329,9 @@
   }
 
   to {
-
     transform: translateY(0);
   }
 }
-
 
 .wobble {
   animation-name: wobble;

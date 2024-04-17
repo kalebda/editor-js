@@ -1,4 +1,4 @@
-import {OutputData} from '../data-formats/output-data';
+import { OutputData } from "../data-formats/output-data";
 
 /**
  * Describes Editor`s saver API
@@ -9,5 +9,5 @@ export interface Saver {
    *
    * @returns {Promise<OutputData>}
    */
-  save(): Promise<OutputData>;
+  save(force?: boolean): Promise<OutputData>;
 }

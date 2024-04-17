@@ -1,6 +1,6 @@
-import Module from '../__module';
-import { CriticalError } from '../errors/critical';
-
+import Module from "../__module";
+import { CriticalError } from "../errors/critical";
+import * as _ from "../utils";
 /**
  * @module ReadOnly
  *
@@ -38,13 +38,11 @@ export default class ReadOnly extends Module {
     const { blockTools } = Tools;
     const toolsDontSupportReadOnly: string[] = [];
 
-    Array
-      .from(blockTools.entries())
-      .forEach(([name, tool]) => {
-        if (!tool.isReadOnlySupported) {
-          toolsDontSupportReadOnly.push(name);
-        }
-      });
+    Array.from(blockTools.entries()).forEach(([name, tool]) => {
+      if (!tool.isReadOnlySupported) {
+        toolsDontSupportReadOnly.push(name);
+      }
+    });
 
     this.toolsDontSupportReadOnly = toolsDontSupportReadOnly;
 
@@ -96,7 +94,7 @@ export default class ReadOnly extends Module {
      */
     const savedBlocks = await this.Editor.Saver.save();
 
-    await this.Editor.BlockManager.clear();
+    await this.Editor.BlockManager.clear(false, true);
     await this.Editor.Renderer.render(savedBlocks.blocks);
 
     return this.readOnlyEnabled;
@@ -107,7 +105,9 @@ export default class ReadOnly extends Module {
    */
   private throwCriticalError(): never {
     throw new CriticalError(
-      `To enable read-only mode all connected tools should support it. Tools ${this.toolsDontSupportReadOnly.join(', ')} don't support read-only mode.`
+      `To enable read-only mode all connected tools should support it. Tools ${this.toolsDontSupportReadOnly.join(
+        ", "
+      )} don't support read-only mode.`
     );
   }
 }
