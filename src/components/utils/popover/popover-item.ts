@@ -1,6 +1,6 @@
-import Dom from '../../dom';
-import { IconDotCircle } from '@codexteam/icons';
-import { PopoverItem as PopoverItemParams } from '../../../../types';
+import Dom from "../../dom";
+import { IconDotCircle } from "@codexteam/icons";
+import { PopoverItem as PopoverItemParams } from "../../../../types";
 
 /**
  * Represents sigle popover item node
@@ -52,12 +52,12 @@ export class PopoverItem {
    * Item html elements
    */
   private nodes: {
-    root: null | HTMLElement,
-    icon: null | HTMLElement
+    root: null | HTMLElement;
+    icon: null | HTMLElement;
   } = {
-      root: null,
-      icon: null,
-    };
+    root: null,
+    icon: null,
+  };
 
   /**
    * Popover item params
@@ -73,32 +73,32 @@ export class PopoverItem {
    * Popover item CSS classes
    */
   public static get CSS(): {
-    container: string,
-    title: string,
-    secondaryTitle: string,
-    icon: string,
-    active: string,
-    disabled: string,
-    focused: string,
-    hidden: string,
-    confirmationState: string,
-    noHover: string,
-    noFocus: string,
-    wobbleAnimation: string
-    } {
+    container: string;
+    title: string;
+    secondaryTitle: string;
+    icon: string;
+    active: string;
+    disabled: string;
+    focused: string;
+    hidden: string;
+    confirmationState: string;
+    noHover: string;
+    noFocus: string;
+    wobbleAnimation: string;
+  } {
     return {
-      container: 'ce-popover-item',
-      title: 'ce-popover-item__title',
-      secondaryTitle: 'ce-popover-item__secondary-title',
-      icon: 'ce-popover-item__icon',
-      active: 'ce-popover-item--active',
-      disabled: 'ce-popover-item--disabled',
-      focused: 'ce-popover-item--focused',
-      hidden: 'ce-popover-item--hidden',
-      confirmationState: 'ce-popover-item--confirmation',
-      noHover: 'ce-popover-item--no-hover',
-      noFocus: 'ce-popover-item--no-focus',
-      wobbleAnimation: 'wobble',
+      container: "ce-popover-item",
+      title: "ce-popover-item__title",
+      secondaryTitle: "ce-popover-item__secondary-title",
+      icon: "ce-popover-item__icon",
+      active: "ce-popover-item--active",
+      disabled: "ce-popover-item--disabled",
+      focused: "ce-popover-item--focused",
+      hidden: "ce-popover-item--hidden",
+      confirmationState: "ce-popover-item--confirmation",
+      noHover: "ce-popover-item--no-hover",
+      noFocus: "ce-popover-item--no-focus",
+      wobbleAnimation: "wobble",
     };
   }
 
@@ -172,26 +172,30 @@ export class PopoverItem {
    * @param params - item construction params
    */
   private make(params: PopoverItemParams): HTMLElement {
-    const el = Dom.make('div', PopoverItem.CSS.container);
+    const el = Dom.make("div", PopoverItem.CSS.container);
 
     if (params.name) {
       el.dataset.itemName = params.name;
     }
 
-    this.nodes.icon = Dom.make('div', PopoverItem.CSS.icon, {
+    this.nodes.icon = Dom.make("div", PopoverItem.CSS.icon, {
       innerHTML: params.icon || IconDotCircle,
     });
 
     el.appendChild(this.nodes.icon);
 
-    el.appendChild(Dom.make('div', PopoverItem.CSS.title, {
-      innerHTML: params.title || '',
-    }));
+    el.appendChild(
+      Dom.make("div", PopoverItem.CSS.title, {
+        innerHTML: params.title || "",
+      })
+    );
 
     if (params.secondaryLabel) {
-      el.appendChild(Dom.make('div', PopoverItem.CSS.secondaryTitle, {
-        textContent: params.secondaryLabel,
-      }));
+      el.appendChild(
+        Dom.make("div", PopoverItem.CSS.secondaryTitle, {
+          textContent: params.secondaryLabel,
+        })
+      );
     }
 
     if (params.isActive) {
@@ -248,17 +252,24 @@ export class PopoverItem {
     this.nodes.root.classList.add(PopoverItem.CSS.noHover);
     this.nodes.root.classList.add(PopoverItem.CSS.noFocus);
 
-    this.nodes.root.addEventListener('mouseleave', this.removeSpecialHoverBehavior, { once: true });
+    this.nodes.root.addEventListener(
+      "mouseleave",
+      this.removeSpecialHoverBehavior,
+      { once: true }
+    );
   }
 
   /**
    * Disables special focus and hover behavior
    */
-  private disableSpecialHoverAndFocusBehavior(): void  {
+  private disableSpecialHoverAndFocusBehavior(): void {
     this.removeSpecialFocusBehavior();
     this.removeSpecialHoverBehavior();
 
-    this.nodes.root.removeEventListener('mouseleave', this.removeSpecialHoverBehavior);
+    this.nodes.root.removeEventListener(
+      "mouseleave",
+      this.removeSpecialHoverBehavior
+    );
   }
 
   /**
@@ -303,7 +314,7 @@ export class PopoverItem {
 
     this.nodes.icon.classList.add(PopoverItem.CSS.wobbleAnimation);
 
-    this.nodes.icon.addEventListener('animationend', this.onErrorAnimationEnd);
+    this.nodes.icon.addEventListener("animationend", this.onErrorAnimationEnd);
   }
 
   /**
@@ -311,6 +322,9 @@ export class PopoverItem {
    */
   private onErrorAnimationEnd = (): void => {
     this.nodes.icon.classList.remove(PopoverItem.CSS.wobbleAnimation);
-    this.nodes.icon.removeEventListener('animationend', this.onErrorAnimationEnd);
+    this.nodes.icon.removeEventListener(
+      "animationend",
+      this.onErrorAnimationEnd
+    );
   };
 }

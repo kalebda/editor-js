@@ -1,13 +1,19 @@
-import * as _ from '../utils';
-import { BlockToolAPI } from '../block';
-import Shortcuts from '../utils/shortcuts';
-import BlockTool from '../tools/block';
-import ToolsCollection from '../tools/collection';
-import { API, BlockToolData, ToolboxConfigEntry, PopoverItem, BlockAPI } from '../../../types';
-import EventsDispatcher from '../utils/events';
-import Popover, { PopoverEvent } from '../utils/popover';
-import I18n from '../i18n';
-import { I18nInternalNS } from '../i18n/namespace-internal';
+import * as _ from "../utils";
+import { BlockToolAPI } from "../block";
+import Shortcuts from "../utils/shortcuts";
+import BlockTool from "../tools/block";
+import ToolsCollection from "../tools/collection";
+import {
+  API,
+  BlockToolData,
+  ToolboxConfigEntry,
+  PopoverItem,
+  BlockAPI,
+} from "../../../types";
+import EventsDispatcher from "../utils/events";
+import Popover, { PopoverEvent } from "../utils/popover";
+import I18n from "../i18n";
+import { I18nInternalNS } from "../i18n/namespace-internal";
 
 /**
  * @todo the first Tab on the Block — focus Plus Button, the second — focus Block Tunes Toggler, the third — focus next Block
@@ -20,17 +26,17 @@ export enum ToolboxEvent {
   /**
    * When the Toolbox is opened
    */
-  Opened = 'toolbox-opened',
+  Opened = "toolbox-opened",
 
   /**
    * When the Toolbox is closed
    */
-  Closed = 'toolbox-closed',
+  Closed = "toolbox-closed",
 
   /**
    * When the new Block added by Toolbox
    */
-  BlockAdded = 'toolbox-block-added',
+  BlockAdded = "toolbox-block-added",
 }
 
 /**
@@ -42,14 +48,14 @@ export interface ToolboxEventMap {
   [ToolboxEvent.Opened]: undefined;
   [ToolboxEvent.Closed]: undefined;
   [ToolboxEvent.BlockAdded]: {
-    block: BlockAPI
+    block: BlockAPI;
   };
 }
 
 /**
  * Available i18n dict keys that should be passed to the constructor
  */
-type ToolboxTextLabelsKeys = 'filter' | 'nothingFound';
+type ToolboxTextLabelsKeys = "filter" | "nothingFound";
 
 /**
  * Toolbox
@@ -101,17 +107,17 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
   private nodes: {
     toolbox: HTMLElement | null;
   } = {
-      toolbox: null,
-    };
+    toolbox: null,
+  };
 
   /**
    * CSS styles
    */
   private static get CSS(): {
     toolbox: string;
-    } {
+  } {
     return {
-      toolbox: 'ce-toolbox',
+      toolbox: "ce-toolbox",
     };
   }
 
@@ -122,7 +128,15 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
    * @param options.api - Editor API methods
    * @param options.tools - Tools available to check whether some of them should be displayed at the Toolbox or not
    */
-  constructor({ api, tools, i18nLabels }: {api: API; tools: ToolsCollection<BlockTool>; i18nLabels: Record<ToolboxTextLabelsKeys, string>}) {
+  constructor({
+    api,
+    tools,
+    i18nLabels,
+  }: {
+    api: API;
+    tools: ToolsCollection<BlockTool>;
+    i18nLabels: Record<ToolboxTextLabelsKeys, string>;
+  }) {
     super();
 
     this.api = api;
@@ -154,8 +168,8 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
     this.nodes.toolbox = this.popover.getElement();
     this.nodes.toolbox.classList.add(Toolbox.CSS.toolbox);
 
-    if (import.meta.env.MODE === 'test') {
-      this.nodes.toolbox.setAttribute('data-cy', 'toolbox');
+    if (import.meta.env.MODE === "test") {
+      this.nodes.toolbox.setAttribute("data-cy", "toolbox");
     }
 
     return this.nodes.toolbox;
@@ -189,7 +203,10 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
    * @param toolName - tool type to be activated
    * @param blockDataOverrides - Block data predefined by the activated Toolbox item
    */
-  public toolButtonActivated(toolName: string, blockDataOverrides: BlockToolData): void {
+  public toolButtonActivated(
+    toolName: string,
+    blockDataOverrides: BlockToolData
+  ): void {
     this.insertNewBlock(toolName, blockDataOverrides);
   }
 
@@ -215,10 +232,69 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
     this.emit(ToolboxEvent.Closed);
   }
 
+  private checkPreviousBlocksForTopics(currentBlockIndex) {
+    for (let i = currentBlockIndex; i >= 0; i--) {
+      const block = this.api.blocks.getBlockByIndex(i);
+      if (block.name == "topics") {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private checkPreviousBlocksForLessons(currentBlockIndex) {
+    for (let i = currentBlockIndex; i >= 0; i--) {
+      const block = this.api.blocks.getBlockByIndex(i);
+      if (block.name == "lessons") {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private checkPreviousBlocksForPoints(currentBlockIndex) {
+    for (let i = currentBlockIndex; i >= 0; i--) {
+      const block = this.api.blocks.getBlockByIndex(i);
+      if (block.name == "points") {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private checkPreviousBlocksForSubPoints(currentBlockIndex) {
+    for (let i = currentBlockIndex; i >= 0; i--) {
+      const block = this.api.blocks.getBlockByIndex(i);
+      if (block.name == "subpoints") {
+        return true;
+      }
+    }
+    return false;
+  }
   /**
    * Close Toolbox
    */
   public toggle(): void {
+    const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
+    const currentBlock = this.api.blocks.getBlockByIndex(currentBlockIndex);
+    if (currentBlock && currentBlockIndex > -1) {
+      let disabledItems = [];
+      if (this.checkPreviousBlocksForTopics(currentBlockIndex)) {
+        disabledItems.push(...["points", "subpoints"]);
+      } else if (this.checkPreviousBlocksForLessons(currentBlockIndex)) {
+        disabledItems.push(...["subpoints", "lessons"]);
+      } else if (this.checkPreviousBlocksForPoints(currentBlockIndex)) {
+        disabledItems.push(...["lessons", "points"]);
+      } else if (this.checkPreviousBlocksForSubPoints(currentBlockIndex)) {
+        disabledItems.push(...["subpoints", "lessons", "points"]);
+      } else {
+        disabledItems.push(
+          ...["paragraph", "list", "table", "lessons", "points", "subpoints"]
+        );
+      }
+      if (disabledItems.length) this.popover.disableItems([...disabledItems]);
+    }
+
     if (!this.opened) {
       this.open();
     } else {
@@ -260,30 +336,34 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
     /**
      * Maps tool data to popover item structure
      */
-    const toPopoverItem = (toolboxItem: ToolboxConfigEntry, tool: BlockTool): PopoverItem => {
+    const toPopoverItem = (
+      toolboxItem: ToolboxConfigEntry,
+      tool: any
+    ): PopoverItem => {
       return {
         icon: toolboxItem.icon,
-        title: I18n.t(I18nInternalNS.toolNames, toolboxItem.title || _.capitalize(tool.name)),
+        title: I18n.t(
+          I18nInternalNS.toolNames,
+          toolboxItem.title || _.capitalize(tool.name)
+        ),
         name: tool.name,
         onActivate: (): void => {
           this.toolButtonActivated(tool.name, toolboxItem.data);
         },
-        secondaryLabel: tool.shortcut ? _.beautifyShortcut(tool.shortcut) : '',
+        secondaryLabel: tool.shortcut ? _.beautifyShortcut(tool.shortcut) : "",
       };
     };
+    return this.toolsToBeDisplayed.reduce<PopoverItem[]>((result, tool) => {
+      if (Array.isArray(tool.toolbox)) {
+        tool.toolbox.forEach((item) => {
+          result.push(toPopoverItem(item, tool));
+        });
+      } else if (tool.toolbox !== undefined) {
+        result.push(toPopoverItem(tool.toolbox, tool));
+      }
 
-    return this.toolsToBeDisplayed
-      .reduce<PopoverItem[]>((result, tool) => {
-        if (Array.isArray(tool.toolbox)) {
-          tool.toolbox.forEach(item => {
-            result.push(toPopoverItem(item, tool));
-          });
-        } else if (tool.toolbox !== undefined)  {
-          result.push(toPopoverItem(tool.toolbox, tool));
-        }
-
-        return result;
-      }, []);
+      return result;
+    }, []);
   }
 
   /**
@@ -324,7 +404,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
             this.api.blocks.convert(currentBlock.id, toolName);
 
             window.requestAnimationFrame(() => {
-              this.api.caret.setToBlock(currentBlockIndex, 'end');
+              this.api.caret.setToBlock(currentBlockIndex, "end");
             });
 
             return;
@@ -357,7 +437,10 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
    * @param {string} toolName - Tool name
    * @param blockDataOverrides - predefined Block data
    */
-  private async insertNewBlock(toolName: string, blockDataOverrides?: BlockToolData): Promise<void> {
+  private async insertNewBlock(
+    toolName: string,
+    blockDataOverrides?: BlockToolData
+  ): Promise<void> {
     const currentBlockIndex = this.api.blocks.getCurrentBlockIndex();
     const currentBlock = this.api.blocks.getBlockByIndex(currentBlockIndex);
 
@@ -369,7 +452,9 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
      * On mobile version, we see the Plus Button even near non-empty blocks,
      * so if current block is not empty, add the new block below the current
      */
-    const index = currentBlock.isEmpty ? currentBlockIndex : currentBlockIndex + 1;
+    const index = currentBlock.isEmpty
+      ? currentBlockIndex
+      : currentBlockIndex + 1;
 
     let blockData;
 

@@ -1,13 +1,13 @@
-import Module from '../../__module';
-import $ from '../../dom';
-import SelectionUtils from '../../selection';
-import Block from '../../block';
-import I18n from '../../i18n';
-import { I18nInternalNS } from '../../i18n/namespace-internal';
-import Flipper from '../../flipper';
-import { TunesMenuConfigItem } from '../../../../types/tools';
-import { resolveAliases } from '../../utils/resolve-aliases';
-import Popover, { PopoverEvent } from '../../utils/popover';
+import Module from "../../__module";
+import $ from "../../dom";
+import SelectionUtils from "../../selection";
+import Block from "../../block";
+import I18n from "../../i18n";
+import { I18nInternalNS } from "../../i18n/namespace-internal";
+import Flipper from "../../flipper";
+import { TunesMenuConfigItem } from "../../../../types/tools";
+import { resolveAliases } from "../../utils/resolve-aliases";
+import Popover, { PopoverEvent } from "../../utils/popover";
 
 /**
  * HTML Elements that used for BlockSettings
@@ -32,8 +32,8 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    */
   public get events(): { opened: string; closed: string } {
     return {
-      opened: 'block-settings-opened',
-      closed: 'block-settings-closed',
+      opened: "block-settings-opened",
+      closed: "block-settings-closed",
     };
   }
 
@@ -42,7 +42,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    */
   public get CSS(): { [name: string]: string } {
     return {
-      settings: 'ce-settings',
+      settings: "ce-settings",
     };
   }
 
@@ -70,17 +70,16 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    */
   private popover: Popover | undefined;
 
-
   /**
    * Panel with block settings with 2 sections:
    *  - Tool's Settings
    *  - Default Settings [Move, Remove, etc]
    */
   public make(): void {
-    this.nodes.wrapper = $.make('div', [ this.CSS.settings ]);
+    this.nodes.wrapper = $.make("div", [this.CSS.settings]);
 
-    if (import.meta.env.MODE === 'test') {
-      this.nodes.wrapper.setAttribute('data-cy', 'block-tunes');
+    if (import.meta.env.MODE === "test") {
+      this.nodes.wrapper.setAttribute("data-cy", "block-tunes");
     }
   }
 
@@ -96,7 +95,9 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    *
    * @param targetBlock - near which Block we should open BlockSettings
    */
-  public open(targetBlock: Block = this.Editor.BlockManager.currentBlock): void {
+  public open(
+    targetBlock: Block = this.Editor.BlockManager.currentBlock
+  ): void {
     this.opened = true;
 
     /**
@@ -115,18 +116,17 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
      * Fill Tool's settings
      */
     const [tunesItems, customHtmlTunesContainer] = targetBlock.getTunes();
-
     /** Tell to subscribers that block settings is opened */
     this.eventsDispatcher.emit(this.events.opened);
     this.popover = new Popover({
       searchable: true,
-      items: tunesItems.map(tune => this.resolveTuneAliases(tune)),
+      items: tunesItems.map((tune) => this.resolveTuneAliases(tune)),
       customContent: customHtmlTunesContainer,
       customContentFlippableItems: this.getControls(customHtmlTunesContainer),
       scopeElement: this.Editor.API.methods.ui.nodes.redactor,
       messages: {
-        nothingFound: I18n.ui(I18nInternalNS.ui.popover, 'Nothing found'),
-        search: I18n.ui(I18nInternalNS.ui.popover, 'Filter'),
+        nothingFound: I18n.ui(I18nInternalNS.ui.popover, "Nothing found"),
+        search: I18n.ui(I18nInternalNS.ui.popover, "Filter"),
       },
     });
 
@@ -170,8 +170,13 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
     /**
      * Remove highlighted content of a Block we are working with
      */
-    if (!this.Editor.CrossBlockSelection.isCrossBlockSelectionStarted && this.Editor.BlockManager.currentBlock) {
-      this.Editor.BlockSelection.unselectBlock(this.Editor.BlockManager.currentBlock);
+    if (
+      !this.Editor.CrossBlockSelection.isCrossBlockSelectionStarted &&
+      this.Editor.BlockManager.currentBlock
+    ) {
+      this.Editor.BlockSelection.unselectBlock(
+        this.Editor.BlockManager.currentBlock
+      );
     }
 
     /** Tell to subscribers that block settings is closed */
@@ -213,7 +218,7 @@ export default class BlockSettings extends Module<BlockSettingsNodes> {
    * @param item - item with resolved aliases
    */
   private resolveTuneAliases(item: TunesMenuConfigItem): TunesMenuConfigItem {
-    const result = resolveAliases(item, { label: 'title' });
+    const result = resolveAliases(item, { label: "title" });
 
     if (item.confirmation) {
       result.confirmation = this.resolveTuneAliases(item.confirmation);
