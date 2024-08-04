@@ -12,6 +12,7 @@ import { ModuleConfig } from "../../../types-internal/module-config";
 import InlineTool from "../../tools/inline";
 import { CommonInternalSettings } from "../../tools/base";
 import { IconChevronDown } from "@codexteam/icons";
+import Block from "../../block";
 
 /**
  * Inline Toolbar elements
@@ -585,6 +586,8 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    * @param {InlineTool} tool - InlineTool object
    */
   private addTool(tool: InlineTool): void {
+    const { currentBlock } = this.Editor.BlockManager;
+
     const instance = tool.create();
     const button = instance.render();
 
@@ -592,6 +595,16 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
       _.log("Render method must return an instance of Node", "warn", tool.name);
 
       return;
+    }
+    // Check if the current block is restricted
+    if (
+      currentBlock &&
+      ["topics", "lessons", "points", "subpoints"].includes(currentBlock.name)
+    ) {
+      // If it's restricted, hide the button
+      button.style.display = "none";
+      // Or disable it
+      // button.disabled = true;
     }
 
     button.dataset.tool = tool.name;
@@ -705,7 +718,7 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
         }
 
         event.preventDefault();
-        this.toolClicked(tool);
+        this.toolClicked(tool, currentBlock);
       },
       on: this.Editor.UI.nodes.redactor,
     });
@@ -716,19 +729,26 @@ export default class InlineToolbar extends Module<InlineToolbarNodes> {
    *
    * @param {InlineTool} tool - Tool's instance
    */
-  private toolClicked(tool: IInlineTool): void {
-    const range = SelectionUtils.range;
+  private toolClicked(tool: IInlineTool, currentBlock?: Block): void {
+    if (
+      currentBlock &&
+      ["topics", "lessons", "points", "subpoints"].includes(currentBlock.name)
+    ) {
+      return;
+    } else {
+      const range = SelectionUtils.range;
 
-    tool.surround(range);
-    this.checkToolsState();
+      tool.surround(range);
+      this.checkToolsState();
 
-    /**
-     * If tool has "actions", so after click it will probably toggle them on.
-     * For example, the Inline Link Tool will show the URL-input.
-     * So we disable the Flipper for that case to allow Tool bind own Enter listener
-     */
-    if (tool.renderActions !== undefined) {
-      this.flipper.deactivate();
+      /**
+       * If tool has "actions", so after click it will probably toggle them on.
+       * For example, the Inline Link Tool will show the URL-input.
+       * So we disable the Flipper for that case to allow Tool bind own Enter listener
+       */
+      if (tool.renderActions !== undefined) {
+        this.flipper.deactivate();
+      }
     }
   }
 

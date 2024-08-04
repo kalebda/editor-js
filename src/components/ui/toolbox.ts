@@ -163,6 +163,7 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
     /**
      * Enable tools shortcuts
      */
+
     this.enableShortcuts();
 
     this.nodes.toolbox = this.popover.getElement();
@@ -409,9 +410,9 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
 
             return;
           } catch (error) {}
-        }
 
-        this.insertNewBlock(toolName);
+          this.insertNewBlock(toolName);
+        }
       },
     });
   }

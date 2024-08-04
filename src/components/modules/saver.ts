@@ -5,12 +5,12 @@
  * @author Codex Team
  * @version 2.0.0
  */
-import Module from '../__module';
-import { OutputData } from '../../../types';
-import { SavedData, ValidatedData } from '../../../types/data-formats';
-import Block from '../block';
-import * as _ from '../utils';
-import { sanitizeBlocks } from '../utils/sanitizer';
+import Module from "../__module";
+import { OutputData } from "../../../types";
+import { SavedData, ValidatedData } from "../../../types/data-formats";
+import Block from "../block";
+import * as _ from "../utils";
+import { sanitizeBlocks } from "../utils/sanitizer";
 
 declare const VERSION: string;
 
@@ -29,21 +29,23 @@ export default class Saver extends Module {
   public async save(): Promise<OutputData> {
     const { BlockManager, Tools } = this.Editor;
     const blocks = BlockManager.blocks,
-        chainData = [];
+      chainData = [];
 
     try {
       blocks.forEach((block: Block) => {
         chainData.push(this.getSavedData(block));
       });
 
-      const extractedData = await Promise.all(chainData) as Array<Pick<SavedData, 'data' | 'tool'>>;
+      const extractedData = (await Promise.all(chainData)) as Array<
+        Pick<SavedData, "data" | "tool">
+      >;
       const sanitizedData = await sanitizeBlocks(extractedData, (name) => {
         return Tools.blockTools.get(name).sanitizeConfig;
       });
 
       return this.makeOutput(sanitizedData);
     } catch (e) {
-      _.logLabeled(`Saving failed due to the Error %o`, 'error', e);
+      _.logLabeled(`Saving failed due to the Error %o`, "error", e);
     }
   }
 
@@ -55,7 +57,7 @@ export default class Saver extends Module {
    */
   private async getSavedData(block: Block): Promise<ValidatedData> {
     const blockData = await block.save();
-    const isValid = blockData && await block.validate(blockData.data);
+    const isValid = blockData && (await block.validate(blockData.data));
 
     return {
       ...blockData,
@@ -90,9 +92,9 @@ export default class Saver extends Module {
         id,
         type: tool,
         data,
-        ...!_.isEmpty(tunes) && {
+        ...(!_.isEmpty(tunes) && {
           tunes,
-        },
+        }),
       };
 
       blocks.push(output);

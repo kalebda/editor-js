@@ -365,14 +365,12 @@ export default class BlockManager extends Module {
     data: Partial<BlockToolData>
   ): Promise<Block> {
     const existingData = await block.data;
-
     const newBlock = this.composeBlock({
       id: block.id,
       tool: block.name,
       data: Object.assign({}, existingData, data),
       tunes: block.tunes,
     });
-
     const blockIndex = this.getBlockIndex(block);
 
     this._blocks.replace(blockIndex, newBlock);

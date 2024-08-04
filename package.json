@@ -1,6 +1,6 @@
 {
   "name": "@kalebu2468/editorjs",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Editor.js — Native JS, based on API and Open Source",
   "main": "dist/editorjs.umd.js",
   "module": "dist/editorjs.mjs",
@@ -13,7 +13,7 @@
     "editorjs"
   ],
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --no-open",
     "build": "vite build --mode production",
     "build:test": "vite build --mode test",
     "lint": "eslint src/ --ext .ts && yarn lint:tests",
