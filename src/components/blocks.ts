@@ -300,7 +300,6 @@ export default class Blocks {
     if (isNaN(index)) {
       index = this.length - 1;
     }
-
     if (
       !["topics", "lessons", "points", "subpoints"].includes(
         this.blocks[index].name

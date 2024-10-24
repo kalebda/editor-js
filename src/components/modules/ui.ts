@@ -948,6 +948,6 @@ export default class UI extends Module<UINodes> {
 
     const isNeedToShowConversionToolbar = clickedOutsideBlockContent !== true;
 
-    this.Editor.InlineToolbar.tryToShow(true, false);
+    this.Editor.InlineToolbar.tryToShow(true, isNeedToShowConversionToolbar);
   }
 }

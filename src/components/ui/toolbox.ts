@@ -283,11 +283,11 @@ export default class Toolbox extends EventsDispatcher<ToolboxEventMap> {
       if (this.checkPreviousBlocksForTopics(currentBlockIndex)) {
         disabledItems.push(...["points", "subpoints"]);
       } else if (this.checkPreviousBlocksForLessons(currentBlockIndex)) {
-        disabledItems.push(...["subpoints", "lessons"]);
+        disabledItems.push(...["subpoints"]);
       } else if (this.checkPreviousBlocksForPoints(currentBlockIndex)) {
-        disabledItems.push(...["lessons", "points"]);
+        disabledItems.push(...["lessons"]);
       } else if (this.checkPreviousBlocksForSubPoints(currentBlockIndex)) {
-        disabledItems.push(...["subpoints", "lessons", "points"]);
+        disabledItems.push(...["lessons", "points"]);
       } else {
         disabledItems.push(
           ...["paragraph", "list", "table", "lessons", "points", "subpoints"]

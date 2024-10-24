@@ -73,7 +73,6 @@ export default class Saver extends Module {
    */
   private makeOutput(allExtractedData): OutputData {
     const blocks = [];
-
     allExtractedData.forEach(({ id, tool, data, tunes, isValid }) => {
       if (!isValid) {
         _.log(`Block «${tool}» skipped because saved data is invalid`);
